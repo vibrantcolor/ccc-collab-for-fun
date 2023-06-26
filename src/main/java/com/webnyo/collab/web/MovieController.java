@@ -7,12 +7,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("/movies")
+@RequestMapping("/")
 public class MovieController {
 
     MovieRepository movieRepo;
@@ -23,7 +22,7 @@ public class MovieController {
 
     @GetMapping
     public String movieCrud(Model model) {
-        List<Movie> movies = (ArrayList<Movie>) movieRepo.findAll(Sort.by("id").ascending());
+        List<Movie> movies = movieRepo.findAll(Sort.by("id").ascending());
         model.addAttribute("movies", movies);
         return "movieCrud";
     }
@@ -31,11 +30,6 @@ public class MovieController {
     @GetMapping("/add-movie")
     public String inputMovie() {
         return "create";
-    }
-
-    @GetMapping("/update-movie")
-    public String updateMovie() {
-        return "update";
     }
 
     // we need to add a movie to the model for data binding (even though we don't want to display it)
@@ -47,12 +41,12 @@ public class MovieController {
     @PostMapping
     public String addMovie(@ModelAttribute Movie movie) {
         movieRepo.save(movie);
-        return "redirect:/movies";
+        return "redirect:/";
     }
 
     @GetMapping("/{id}")
     public String editMovie(Model model, @PathVariable Long id) {
-        Movie movie = null;
+        Movie movie;
         if (movieRepo.findById(id).isPresent()) {
             movie = movieRepo.findById(id).get();
             model.addAttribute("movie", movie);
@@ -69,12 +63,12 @@ public class MovieController {
             updatedMovie.setYear(movie.getYear());
             movieRepo.save(updatedMovie);
         }
-        return "redirect:/movies";
+        return "redirect:/";
     }
 
     @DeleteMapping
     public String deleteMovie(@ModelAttribute Movie movie) {
         movieRepo.deleteById(movie.getId());
-        return "redirect:/movies";
+        return "redirect:/";
     }
 }
